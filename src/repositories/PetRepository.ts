@@ -12,13 +12,11 @@ export default class PetRepository implements InterfacePetRepository {
   async criaPet(pet: PetEntity): Promise<void> {
     await this.repository.save(pet);
   }
+
   async listaPet(): Promise<PetEntity[]> {
     return await this.repository.find();
   }
-  async atualizaPet(
-    id: number,
-    pet: PetEntity
-  ): Promise<{ success: boolean; message?: string }> {
+  async atualizaPet(id: number, pet: PetEntity): Promise<{ success: boolean; message?: string }> {
     try {
       const petToUpdate = await this.repository.findOne({ where: { id } });
       if (!petToUpdate) {
@@ -32,6 +30,7 @@ export default class PetRepository implements InterfacePetRepository {
       return { success: false, message: 'Ocorreu um erro ao atualizar o Pet' };
     }
   }
+
   async deletaPet(id: number): Promise<{ success: boolean; message?: string }> {
     try {
       const petToRemove = await this.repository.findOne({ where: { id } });
