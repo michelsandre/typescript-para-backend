@@ -4,7 +4,7 @@ import EnumEspecie from '../enum/EnumEspecie';
 @Entity()
 export default class PetEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
   @Column()
   nome: string;
   @Column()
@@ -13,4 +13,16 @@ export default class PetEntity {
   dataNascimento: Date;
   @Column()
   adotado: boolean;
+
+  constructor(
+    nome: string,
+    especie: EnumEspecie,
+    dataNascimento: Date,
+    adotado: boolean
+  ) {
+    this.nome = nome;
+    this.especie = especie;
+    this.dataNascimento = dataNascimento;
+    this.adotado = adotado;
+  }
 }

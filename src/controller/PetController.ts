@@ -9,19 +9,15 @@ let listaDePets: Array<TipoPet> = [];
 export default class PetController {
   constructor(private repository: PetRepository) {}
 
-  criarPet(req: Request, res: Response) {
+  async criarPet(req: Request, res: Response) {
     const { adotado, especie, dataNascimento, nome } = <PetEntity>req.body;
 
     if (!Object.values(EnumEspecie).includes(especie)) {
       return res.status(400).send({ erro: 'Especie inválida' });
     }
-    const novoPet = new PetEntity();
-    novoPet.adotado = adotado;
-    novoPet.especie = especie;
-    novoPet.dataNascimento = dataNascimento;
-    novoPet.nome = nome;
+    const novoPet = new PetEntity(nome, especie, dataNascimento, adotado);
 
-    this.repository.criaPet(novoPet);
+    await this.repository.criaPet(novoPet);
 
     return res.status(201).send(novoPet);
   }
@@ -31,32 +27,26 @@ export default class PetController {
     return res.status(200).send(listaDePets);
   }
 
-  atualizaPet(req: Request, res: Response) {
+  async atualizaPet(req: Request, res: Response) {
     const { id } = req.params;
-    const { adotado, especie, dataNascimento, nome } = <TipoPet>req.body;
+    const { success, message } = await this.repository.atualizaPet(
+      Number(id),
+      req.body as PetEntity
+    );
 
-    const pet = listaDePets.find((pet) => pet.id === Number(id));
-
-    if (!pet) return res.status(404).send({ erro: 'Pet não encontrado' });
-
-    pet.nome = nome;
-    pet.dataNascimento = dataNascimento;
-    pet.adotado = adotado;
-    pet.especie = especie;
-
-    return res.status(200).send(pet);
+    if (!success) {
+      return res.status(404).send({ message });
+    }
+    return res.sendStatus(204);
   }
 
-  deletaPets(req: Request, res: Response) {
+  async deletaPets(req: Request, res: Response) {
     const { id } = req.params;
+    const { success, message } = await this.repository.deletaPet(Number(id));
 
-    const pet = listaDePets.find((pet) => pet.id === Number(id));
-
-    if (!pet) return res.status(404).send({ error: 'Pet não encontrado' });
-
-    const index = listaDePets.indexOf(pet);
-    listaDePets.splice(index, 1);
-
-    return res.status(200).send({ mensagem: 'Pet deletado com sucesso' });
+    if (!success) {
+      return res.status(404).send({ message });
+    }
+    return res.sendStatus(204);
   }
 }
