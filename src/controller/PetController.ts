@@ -3,6 +3,7 @@ import type TipoPet from '../tipos/TipoPet';
 import EnumEspecie from '../enum/EnumEspecie';
 import PetRepository from '../repositories/PetRepository';
 import PetEntity from '../entities/PetEntity';
+import EnumPorte from '../enum/EnumPorte';
 
 let listaDePets: Array<TipoPet> = [];
 
@@ -10,12 +11,17 @@ export default class PetController {
   constructor(private repository: PetRepository) {}
 
   async criarPet(req: Request, res: Response) {
-    const { adotado, especie, dataNascimento, nome } = <PetEntity>req.body;
+    const { adotado, especie, dataNascimento, nome, porte } = <PetEntity>req.body;
 
     if (!Object.values(EnumEspecie).includes(especie)) {
       return res.status(400).send({ erro: 'Especie inválida' });
     }
-    const novoPet = new PetEntity(nome, especie, dataNascimento, adotado);
+
+    if (porte && !(porte in EnumPorte)) {
+      return res.status(400).send({ erro: 'Porte inválido' });
+    }
+
+    const novoPet = new PetEntity(nome, especie, dataNascimento, adotado, porte);
 
     await this.repository.criaPet(novoPet);
 
@@ -60,5 +66,13 @@ export default class PetController {
     if (!success) return res.status(404).send({ message });
 
     return res.sendStatus(204);
+  }
+
+  async buscaPetPeloPorte(req: Request, res: Response) {
+    const { porte } = req.query;
+
+    const listaDePets = await this.repository.buscaPetPeloPorte(porte as EnumPorte);
+
+    return res.status(200).send(listaDePets);
   }
 }
