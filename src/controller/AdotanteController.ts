@@ -22,10 +22,18 @@ export default class AdotanteController {
       //Criptografar senha
       const senhaHash = await bcrypt.hash(senha, 8);
 
-      const novoAdotante = new AdotanteEntity(nome, senhaHash, celular, foto, endereco);
+      const novoAdotante = new AdotanteEntity(
+        nome,
+        senhaHash,
+        celular,
+        foto,
+        endereco
+      );
 
       await this.repository.criaAdotante(novoAdotante);
-      return res.status(201).send({ data: { id: novoAdotante.id, nome, celular } });
+      return res
+        .status(201)
+        .send({ data: { id: novoAdotante.id, nome, celular, endereco } });
     } catch (error) {
       return res.status(500).send({ error: 'Erro ao criar o adodante' });
     }
@@ -41,6 +49,7 @@ export default class AdotanteController {
         id: adotante.id,
         nome: adotante.nome,
         celular: adotante.celular,
+        endereco: adotante.endereco !== null ? adotante.endereco : undefined,
         // pets: adotante.pets,
       };
     });
@@ -70,7 +79,9 @@ export default class AdotanteController {
     res: Response<TipoResponseBodyAdotante>
   ) {
     const { id } = req.params;
-    const { success, message } = await this.repository.deletaAdotante(Number(id));
+    const { success, message } = await this.repository.deletaAdotante(
+      Number(id)
+    );
 
     if (!success) return res.status(404).send({ error: message });
 
@@ -78,14 +89,14 @@ export default class AdotanteController {
   }
 
   async atualizaEnderecoAdotante(
-    req: Request<TipoRequestParamsAdotante, {}, TipoRequestBodyAdotante>,
+    req: Request<TipoRequestParamsAdotante, {}, EnderecoEntity>,
     res: Response<TipoResponseBodyAdotante>
   ) {
     const { id } = req.params;
 
     const { success, message } = await this.repository.atualizaEnderecoAdotante(
       Number(id),
-      req.body.endereco as EnderecoEntity
+      req.body
     );
 
     if (!success) return res.status(404).send({ error: message });
