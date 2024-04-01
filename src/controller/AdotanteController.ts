@@ -19,21 +19,10 @@ export default class AdotanteController {
     try {
       const { nome, celular, endereco, foto, senha } = <AdotanteEntity>req.body;
 
-      //Criptografar senha
-      const senhaHash = await bcrypt.hash(senha, 8);
-
-      const novoAdotante = new AdotanteEntity(
-        nome,
-        senhaHash,
-        celular,
-        foto,
-        endereco
-      );
+      const novoAdotante = new AdotanteEntity(nome, senha, celular, foto, endereco);
 
       await this.repository.criaAdotante(novoAdotante);
-      return res
-        .status(201)
-        .send({ data: { id: novoAdotante.id, nome, celular, endereco } });
+      return res.status(201).send({ data: { id: novoAdotante.id, nome, celular, endereco } });
     } catch (error) {
       return res.status(500).send({ error: 'Erro ao criar o adodante' });
     }
@@ -79,9 +68,7 @@ export default class AdotanteController {
     res: Response<TipoResponseBodyAdotante>
   ) {
     const { id } = req.params;
-    const { success, message } = await this.repository.deletaAdotante(
-      Number(id)
-    );
+    const { success, message } = await this.repository.deletaAdotante(Number(id));
 
     if (!success) return res.status(404).send({ error: message });
 
