@@ -54,7 +54,9 @@ export default class PetRepository implements InterfacePetRepository {
       throw new NaoEncontrado('Pet não encontrado');
     }
 
-    const adotante = await this.adotanteRepository.findOne({ where: { id: idAdotante } });
+    const adotante = await this.adotanteRepository.findOne({
+      where: { id: idAdotante },
+    });
     if (!adotante) {
       throw new NaoEncontrado('Adotante não encontrado');
     }
@@ -75,7 +77,9 @@ export default class PetRepository implements InterfacePetRepository {
     campo: Tipo,
     valor: PetEntity[Tipo]
   ): Promise<PetEntity[]> {
-    const pets = await this.petRepository.find({ where: { [campo]: Like(`%${valor}%`) } });
+    const pets = await this.petRepository.find({
+      where: { [campo]: Like(`%${valor}%`) },
+    });
     return pets;
   }
 }

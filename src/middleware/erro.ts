@@ -8,10 +8,11 @@ export const erroMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  const statusCode = erro.statusCode ?? EnumHttpStatusCode.INTERNAL_SERVER_ERROR;
+  const statusCode =
+    erro.statusCode ?? EnumHttpStatusCode.INTERNAL_SERVER_ERROR;
 
   const mensagem = erro.statusCode ? erro.message : 'Erro interno do servidor';
 
-  res.status(statusCode).json({ mensagem });
+  res.status(statusCode).send({ mensagem });
   return next();
 };

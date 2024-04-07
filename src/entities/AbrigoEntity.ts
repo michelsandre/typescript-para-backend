@@ -26,7 +26,11 @@ export default class AbrigoEntity {
   @Column()
   senha: string;
 
-  @OneToOne(() => EnderecoEntity, { nullable: true, cascade: true, eager: true })
+  @OneToOne(() => EnderecoEntity, {
+    nullable: true,
+    cascade: true,
+    eager: true,
+  })
   @JoinColumn()
   endereco?: EnderecoEntity;
 

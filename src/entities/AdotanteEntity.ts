@@ -20,11 +20,15 @@ export default class AdotanteEntity {
   nome: string;
   @Column()
   senha: string;
-  @Column()
+  @Column({ unique: true })
   celular: string;
   @Column({ nullable: true })
   foto?: string;
-  @OneToOne(() => EnderecoEntity, { nullable: true, cascade: true, eager: true })
+  @OneToOne(() => EnderecoEntity, {
+    nullable: true,
+    cascade: true,
+    eager: true,
+  })
   @JoinColumn()
   endereco?: EnderecoEntity;
   @OneToMany(() => PetEntity, (pet) => pet.adotante, { eager: true })

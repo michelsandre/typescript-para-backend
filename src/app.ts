@@ -1,3 +1,4 @@
+import 'express-async-errors';
 import express, { Response } from 'express';
 import router from './routes';
 import 'reflect-metadata';
